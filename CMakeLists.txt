@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(MathTest)
+project(MathUnitTest)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,8 +21,8 @@ target_include_directories(math INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 enable_testing()
 
 # Add test executable
-add_executable(math_test tests/math_test.cpp)
-target_link_libraries(math_test gtest math)
+add_executable(MathUnitTest tests/math_test.cpp)
+target_link_libraries(MathUnitTest gtest math)
 
 # Register tests
-add_test(NAME MathTests COMMAND math_test)
+add_test(NAME MathUnitTest COMMAND MathUnitTest)
