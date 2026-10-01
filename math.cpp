@@ -26,5 +26,5 @@ public:
             throw std::invalid_argument("Cannot divide by zero");
         }
         return a / static_cast<double>(b);
-    }        
+    }
 };
