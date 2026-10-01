@@ -20,4 +20,15 @@ public:
         }
         return a / b;
     }
+
+    static double divide(double a, int b) {
+        if (b == 0) {
+            throw std::invalid_argument("Cannot divide by zero");
+        }
+        return a / static_cast<double>(b);
+    }
+
+    // static int divide(int a, int b)
+
+
 };

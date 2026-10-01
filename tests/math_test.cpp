@@ -1,9 +1,39 @@
 #include <gtest/gtest.h>
+#include <iostream>
 #include "../math.cpp"
+
+class ConsoleReportListener : public ::testing::EmptyTestEventListener {
+public:
+    void OnTestEnd(const ::testing::TestInfo& test_info) override {
+        std::cout << "[REPORT] " << test_info.test_suite_name() << "." << test_info.name()
+                  << " - " << (test_info.result()->Passed() ? "PASSED" : "FAILED")
+                  << std::endl;
+    }
+
+    void OnTestProgramEnd(const ::testing::UnitTest& unit_test) override {
+        std::cout << "[REPORT] Total: " << unit_test.test_to_run_count()
+                  << ", Passed: " << unit_test.successful_test_count()
+                  << ", Failed: " << unit_test.failed_test_count()
+                  << ", Skipped: " << unit_test.skipped_test_count()
+                  << std::endl;
+    }
+};
 
 // Test fixture for Math operations
 class MathTest : public ::testing::Test {
 protected:
+    void SetUp() override {
+        const auto* info = ::testing::UnitTest::GetInstance()->current_test_info();
+        std::cout << "[TEST CASE] " << info->test_suite_name() << "." << info->name()
+                  << " started" << std::endl;
+    }
+
+    void TearDown() override {
+        const auto* info = ::testing::UnitTest::GetInstance()->current_test_info();
+        std::cout << "[TEST CASE] " << info->test_suite_name() << "." << info->name()
+                  << (HasFailure() ? " FAILED" : " PASSED") << std::endl;
+    }
+
     Math math;
 };
 
@@ -81,4 +111,22 @@ TEST_F(MathTest, DivideZeroByNumber) {
 
 TEST_F(MathTest, DivideFractionalResult) {
     EXPECT_DOUBLE_EQ(0.5, Math::divide(1.0, 2.0));
+}
+
+TEST_F(MathTest, DivideUsingIntDivisor) {
+    EXPECT_DOUBLE_EQ(2.5, Math::divide(5.0, 2));
+}
+
+TEST_F(MathTest, DivideUsingNegativeIntDivisor) {
+    EXPECT_DOUBLE_EQ(-2.0, Math::divide(6.0, -3));
+}
+
+TEST_F(MathTest, DivideByZeroIntThrows) {
+    EXPECT_THROW(Math::divide(5.0, 0), std::invalid_argument);
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::UnitTest::GetInstance()->listeners().Append(new ConsoleReportListener());
+    return RUN_ALL_TESTS();
 }
